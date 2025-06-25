@@ -2,10 +2,6 @@ import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -13,7 +9,7 @@ CORS(app)
 # Authenticate with the GitHub Copilot Models API
 client = OpenAI(
     base_url="https://models.github.ai/inference",
-    api_key=os.environ.get("GITHUB_TOKEN"),
+    api_key=os.environ["GITHUB_TOKEN"],
 )
 
 def generate_openai_response(prompt):
@@ -21,14 +17,14 @@ def generate_openai_response(prompt):
         messages=[
             {
                 "role": "system",
-                "content": "You are a helpful assistant.",
+                "content": "You are a helpful assistant that creates structured summaries and quizzes.",
             },
             {
                 "role": "user",
                 "content": prompt,
             }
         ],
-        model="openai/gpt-4o-mini",  # or "openai/gpt-4o", "openai/gpt-4.1", etc.
+        model="openai/gpt-4o-mini", 
         temperature=1,
         max_tokens=4096,
         top_p=1
@@ -47,7 +43,46 @@ def generate():
     if not user_text:
         return jsonify({"error": "No input received."}), 400
 
-    prompt = f"""Summarize the following story and generate 3 multiple choice questions with 4 options each. Mark the correct answer with (✔️).
+    prompt = f"""Summarize the following story and generate 5 multiple choice questions with 4 options each. Format your response as follows:
+
+SUMMARY:
+[Write a concise summary of the story]
+
+QUIZ:
+1. [Question 1]
+   A) [Option A]
+   B) [Option B] 
+   C) [Option C]
+   D) [Option D]
+   Correct: [A/B/C/D]
+
+2. [Question 2]
+   A) [Option A]
+   B) [Option B]
+   C) [Option C]
+   D) [Option D]
+   Correct: [A/B/C/D]
+
+3. [Question 3]
+   A) [Option A]
+   B) [Option B]
+   C) [Option C]
+   D) [Option D]
+   Correct: [A/B/C/D]
+
+4. [Question 4]
+   A) [Option A]
+   B) [Option B]
+   C) [Option C]
+   D) [Option D]
+   Correct: [A/B/C/D]
+
+5. [Question 5]
+   A) [Option A]
+   B) [Option B]
+   C) [Option C]
+   D) [Option D]
+   Correct: [A/B/C/D]
 
 Story:
 {user_text}
@@ -59,5 +94,4 @@ Story:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 7000))
-    app.run(debug=False, host="0.0.0.0", port=port)
+    app.run(debug=True, port=7000)
