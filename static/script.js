@@ -52,10 +52,10 @@ function parseAndDisplayResult(result) {
     line = line.trim();
     if (!line) continue;
 
-    if (line.startsWith('SUMMARY:')) {
+    if (line.toLowerCase().startsWith('**summary:**')) {
       currentSection = 'summary';
       continue;
-    } else if (line.startsWith('QUIZ:')) {
+    } else if (line.toLowerCase().startsWith('**multiple choice questions:**')) {
       currentSection = 'quiz';
       continue;
     }
@@ -130,6 +130,12 @@ function displayQuiz(questions) {
     quizContent.appendChild(questionDiv);
   });
 }
+// Add Submit Quiz button at the end
+const submitBtn = document.createElement('button');
+submitBtn.textContent = 'Submit Quiz';
+submitBtn.className = 'submit-btn';
+submitBtn.onclick = submitQuiz;
+quizContent.appendChild(submitBtn);
 
 function selectOption(questionIndex, selectedOption) {
   if (quizCompleted) return;
@@ -137,46 +143,59 @@ function selectOption(questionIndex, selectedOption) {
   // Update user answer
   userAnswers[questionIndex] = selectedOption;
 
-  // Check if correct
-  const isCorrect = selectedOption === quizData[questionIndex].correct;
-  
-  // Update score - only increment if this is the first time answering correctly
-  if (isCorrect) {
-    score++;
-  }
-
-  // Update score display
-  document.getElementById("scoreText").textContent = `Score: ${score}/5`;
-
-  // Show feedback
-  const feedbackDiv = document.getElementById(`feedback-${questionIndex}`);
+  // Highlight selected option
   const optionBtns = document.querySelectorAll(`[data-question="${questionIndex}"]`);
-  
   optionBtns.forEach(btn => {
-    btn.disabled = true;
     btn.classList.remove('selected');
-    const optionLetter = btn.getAttribute('data-option');
-    
-    if (optionLetter === quizData[questionIndex].correct) {
-      btn.classList.add('correct');
-    } else if (optionLetter === selectedOption && !isCorrect) {
-      btn.classList.add('incorrect');
-    }
-    if (optionLetter === selectedOption) {
-      btn.classList.add('selected'); // Add bounce animation
+    if (btn.getAttribute('data-option') === selectedOption) {
+      btn.classList.add('selected');
     }
   });
 
-  if (isCorrect) {
-    feedbackDiv.innerHTML = '<span class="correct-feedback">✅ Correct!</span>';
-  } else {
-    feedbackDiv.innerHTML = `<span class="incorrect-feedback">❌ Incorrect. The correct answer is ${quizData[questionIndex].correct})</span>`;
-  }
+  // Do NOT show feedback or lock buttons yet
+}
+function submitQuiz() {
+  if (quizCompleted) return;
 
   // Check if all questions are answered
-  if (userAnswers.every(answer => answer !== null)) {
-    showFinalResults();
+  if (userAnswers.includes(null)) {
+    alert("Please answer all questions before submitting!");
+    return;
   }
+
+  score = 0;
+  quizCompleted = true;
+
+  quizData.forEach((q, index) => {
+    const selected = userAnswers[index];
+    const isCorrect = selected === q.correct;
+    if (isCorrect) score++;
+
+    // Show feedback
+    const feedbackDiv = document.getElementById(`feedback-${index}`);
+    if (isCorrect) {
+      feedbackDiv.innerHTML = '<span class="correct-feedback">✅ Correct!</span>';
+    } else {
+      feedbackDiv.innerHTML = `<span class="incorrect-feedback">❌ Incorrect. The correct answer is ${q.correct})</span>`;
+    }
+
+    // Disable all option buttons for this question
+    const optionBtns = document.querySelectorAll(`[data-question="${index}"]`);
+    optionBtns.forEach(btn => {
+      btn.disabled = true;
+      btn.classList.remove('selected');
+      const optionLetter = btn.getAttribute('data-option');
+      if (optionLetter === q.correct) {
+        btn.classList.add('correct');
+      } else if (optionLetter === selected && !isCorrect) {
+        btn.classList.add('incorrect');
+      }
+    });
+  });
+
+  // Show final score
+  document.getElementById("scoreText").textContent = `Score: ${score}/${quizData.length}`;
+  showFinalResults();
 }
 
 function showFinalResults() {
