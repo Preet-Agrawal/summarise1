@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -45,7 +45,7 @@ def generate():
     user_text = data.get("text", "")
 
     if not user_text:
-        return "No input received.", 400
+        return jsonify({"error": "No input received."}), 400
 
     prompt = f"""Summarize the following story and generate 3 multiple choice questions with 4 options each. Mark the correct answer with (✔️).
 
@@ -54,9 +54,9 @@ Story:
 """
     try:
         result = generate_openai_response(prompt)
-        return result
+        return jsonify({"result": result})
     except Exception as e:
-        return f"Error: {str(e)}", 500
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 7000))
