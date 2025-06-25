@@ -44,34 +44,28 @@ body {
   letter-spacing: 1.5px;
   text-shadow: 0 2px 8px rgba(185, 147, 214, 0.08);
 }
-.header-right {
+.header-right, nav.header-right {
   display: flex;
-  gap: 1rem;
+  flex-direction: row;
   align-items: center;
+  gap: 2em;
 }
+
 .nav-link {
-  position: relative;
+  display: inline-block;
+  padding: 0.5em 1em;
   text-decoration: none;
   color: #3a3a8a;
-  font-weight: 600;
-  font-size: 1.08rem;
-  padding: 0.3rem 0.5rem;
-  transition: color 0.2s;
-  letter-spacing: 0.5px;
+  font-size: 1em;
   border-radius: 6px;
-  overflow: hidden;
+  transition: background 0.2s, color 0.2s;
 }
-.nav-link::after {
-  content: '';
-  display: block;
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #b993d6 0%, #8ca6db 100%);
-  border-radius: 2px;
-  transform: scaleX(0);
-  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+
+.nav-link:hover {
+  background: #ececff;
+  color: #6c63ff;
 }
+
 .nav-link:hover {
   color: #7b5fa1;
   background: rgba(185, 147, 214, 0.08);
@@ -816,48 +810,16 @@ body::before {
 
 /* Mobile styles */
 @media (max-width: 600px) {
-  body, html {
-    font-size: 16px;
-    padding: 0;
-    margin: 0;
-  }
-
-  .main, .center-content, .text-input-section, .result-section, .summary-container, .quiz-container {
-    width: 100% !important;
-    padding: 0 5vw !important;
-    box-sizing: border-box;
-  }
-
-  .text-area-container textarea {
-    width: 100% !important;
-    min-width: 0 !important;
-    font-size: 1em;
-  }
-
-  .get-started, .submit-btn, .reset-btn {
+  .header-right, nav.header-right {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5em;
     width: 100%;
+  }
+  .nav-link {
+    width: 100%;
+    text-align: left;
     font-size: 1.1em;
-    margin: 10px 0;
-  }
-
-  .question-container {
-    padding: 1em 0.5em;
-    margin: 1em 0;
-  }
-
-  .score-display {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5em;
-  }
-
-  .header, .header-left, .header-right, nav {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5em;
-  }
-
-  .site-title {
-    font-size: 1.3em;
+    padding: 0.8em 0.5em;
   }
 }
