@@ -747,16 +747,31 @@ body::before {
 
 /* Mobile styles */
 @media (max-width: 600px) {
+  .header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0.5rem 0.3rem;
+  }
+  .header-left {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .site-title {
+    font-size: 1.1rem;
+  }
   .header-right, nav.header-right {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5em;
-    width: 100%;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 0.7em;
+    width: auto;
+    justify-content: flex-end;
   }
   .nav-link {
-    width: 100%;
-    text-align: left;
-    font-size: 1.1em;
-    padding: 0.8em 0.5em;
+    width: auto;
+    text-align: center;
+    font-size: 1em;
+    padding: 0.5em 0.5em;
+    margin: 0 0.1em;
   }
 }
